@@ -57,6 +57,8 @@ def downloadAll(id,istart=0):
         i = str(i)
         i = "0"*(5-len(i)) + i
         dest = f"{base}/Virusshare{i}/"
+        if os.path.exists(dest):
+            os.makedirs(dest)
         url = f"https://samples.vx-underground.org/samples/Blocks/Virusshare%20Collection/Virusshare.{i}.7z"
         print("downloading ",url)
         download_data(url,dest)
