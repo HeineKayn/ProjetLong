@@ -28,6 +28,7 @@ def download_data(url,dest):
     extracted = url.split("/")[-1]
     extracted = extracted.split(".")[:-1]
     unzipped  = f"./{extracted}/"
+    os.remove(zipname)
     
     entries = os.listdir(unzipped)
     for i,entry in enumerate(entries):
@@ -43,8 +44,6 @@ def download_data(url,dest):
         imgpath = f"{dest}{folder}/{hashed}"
         print(f"-- converting {filepath} to img... ({i}/{len(entries)})")
         projetLib.data.extract_img(filepath,imgpath)
-        
-    os.remove(zipname)
     shutil.rmtree(unzipped)
 
 def downloadAll(idstart):
