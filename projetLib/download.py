@@ -17,12 +17,12 @@ def download_data(url,dest):
 
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
-        downloader = enumerate(r.iter_content(chunk_size=8192))
-        t1 = tqdm(downloader, desc=f"Downloading zip", colour="#00ff00")
+        chunks = r.iter_content(chunk_size=8192)
+        t1 = tqdm(enumerate(chunks), desc=f"Downloading zip", colour="#00ff00")
         with open(zipname, 'wb') as f:
             for i,chunk in t1:  
                 f.write(chunk)
-                t1.set_description(f'Chunk {i + 1}/{len(downloader)}')
+                t1.set_description(f'Chunk {i + 1}/{len(chunks)}')
                 
     print("extracting ",zipname)
     with py7zr.SevenZipFile(zipname, mode='r', password=password) as z: 
