@@ -42,7 +42,7 @@ def download_data(url,dest):
 
         hashed = str(abs(hash(extracted)))
         imgpath = f"{dest}{folder}/{hashed}"
-        print(f"-- converting {filepath} to img... ({i}/{len(entries)})")
+        print(f"-- converting {filepath} to {imgpath} ... ({i}/{len(entries)})")
         projetLib.data.extract_img(filepath,imgpath)
     shutil.rmtree(unzipped)
 
