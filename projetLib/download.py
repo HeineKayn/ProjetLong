@@ -57,7 +57,7 @@ def extract_features(unzipped,dest):
 
 def downloadAll(id,istart=0):
     base = "./data/images"
-    for i in reversed(range(id+3*istart,460,3)):
+    for i in reversed(range(id,460-3*istart,3)):
         i = str(i)
         i = "0"*(5-len(i)) + i
         dest = f"{base}/Virusshare{i}/"
