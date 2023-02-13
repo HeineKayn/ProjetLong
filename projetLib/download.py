@@ -36,8 +36,8 @@ def download_data(url,dest):
     os.remove(zipname)
     
     entries = os.listdir(unzipped)
-    t1 = tqdm(enumerate(entries), desc=f"Extracting features", colour="#00ff00")
-    for i,entry in t1:
+    t1 = tqdm(entries, total=len(entries), desc=f"Extracting features", leave=True, file=sys.stdout)
+    for entry in t1:
         filepath = unzipped + entry
         fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
     
@@ -49,7 +49,6 @@ def download_data(url,dest):
         hashed = str(abs(hash(entry)))
         imgpath = f"{dest}{folder}/{hashed}"
         projetLib.data.extract_img(filepath,imgpath)
-        t1.set_description(f'Fichier {i + 1}/{len(entries)}')
     shutil.rmtree(unzipped)
 
 def downloadAll(id,istart=0):
