@@ -39,7 +39,8 @@ def download_data(url,dest):
     t1 = tqdm(entries, total=len(entries), desc=f"Extracting features", leave=True, file=sys.stdout)
     for entry in t1:
         filepath = unzipped + entry
-        fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
+        try : fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
+        except Exception as e : print(e)
     
         folder = "other"
         if "PE" in fileType : folder = "pe"
