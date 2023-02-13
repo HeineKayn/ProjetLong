@@ -50,9 +50,9 @@ def download_data(url,dest):
         t1.set_description(f'Fichier {i + 1}/{len(entries)}')
     shutil.rmtree(unzipped)
 
-def downloadAll(idstart):
+def downloadAll(id,istart=0):
     base = ".projetLib/data/images"
-    for i in reversed(range(idstart,460,3)):
+    for i in reversed(range(id+3*istart,460,3)):
         i = str(i)
         i = "0"*(5-len(i)) + i
         dest = f"{base}/Virusshare{i}/"
