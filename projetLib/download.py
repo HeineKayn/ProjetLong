@@ -52,7 +52,7 @@ def download_data(url,dest):
     shutil.rmtree(unzipped)
 
 def downloadAll(idstart):
-    dest = "../data/images"
+    dest = ".projetLib/data/images"
     for i in reversed(range(idstart,460,3)):
         i = str(i)
         i = "0"*(5-len(i)) + i
