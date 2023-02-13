@@ -20,6 +20,7 @@ def download_data(url,dest):
             for i,chunk in enumerate(r.iter_content(chunk_size=8192)):  
                 f.write(chunk)
                 
+    print("-- extracting ",zipname)
     with py7zr.SevenZipFile(zipname, mode='r', password=password) as z: 
         z.extractall() 
         
@@ -28,7 +29,7 @@ def download_data(url,dest):
     unzipped  = f"./{extracted}/"
     
     entries = os.listdir(unzipped)
-    for entry in entries:
+    for i,entry in enumerate(entries):
         filepath = unzipped + entry
         fileType = subprocess.check_output(filepath, shell=True).decode()
     
@@ -39,6 +40,7 @@ def download_data(url,dest):
 
         hashed = str(abs(hash(extracted)))
         imgpath = f"{dest}{folder}/{hashed}"
+        print(f"---- converting {filepath} to img... ({i}/{len(entries)})")
         projetLib.data.extract_img(filepath,imgpath)
         
     os.remove(zipname)
@@ -50,4 +52,5 @@ def downloadAll(idstart):
         i = str(i)
         i = "0"*(5-len(i)) + i
         url = f"https://samples.vx-underground.org/samples/Blocks/Virusshare%20Collection/Virusshare.{i}.7z"
+        print("downloading ",url)
         download_data(url,dest)
