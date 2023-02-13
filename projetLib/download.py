@@ -12,10 +12,10 @@ import projetLib
 from tqdm import tqdm
 import sys
 
-def download_data(url,dest):
-    zipname = "./VirusTemp.7z"
-    password = "infected"
+zipname = "./VirusTemp.7z"
 
+def download_zip(url):
+    print("downloading ",url)
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
         file_size = int(r.headers['Content-Length'])
@@ -25,16 +25,19 @@ def download_data(url,dest):
         with open(zipname, 'wb') as f:
             for chunk in t1:  
                 f.write(chunk)
-                
+
+def unzip(url):          
+    password = "infected"
     print("extracting ",zipname)
     with py7zr.SevenZipFile(zipname, mode='r', password=password) as z: 
-        z.extractall() 
-        
+        z.extractall()  
+    os.remove(zipname)
     extracted = url.split("/")[-1]
     extracted = ".".join(extracted.split(".")[:-1])
     unzipped  = f"./{extracted}/"
-    os.remove(zipname)
-    
+    return unzipped
+
+def extract_features(unzipped,dest):
     entries = os.listdir(unzipped)
     t1 = tqdm(entries, total=len(entries), desc=f"Extracting features", leave=True, file=sys.stdout)
     for entry in t1:
@@ -50,8 +53,6 @@ def download_data(url,dest):
             imgpath = f"{dest}{folder}/{hashed}"
             projetLib.data.extract_img(filepath,imgpath)
         except Exception as e : print(e)
-    
-        
     shutil.rmtree(unzipped)
 
 def downloadAll(id,istart=0):
@@ -63,5 +64,7 @@ def downloadAll(id,istart=0):
         if not os.path.exists(dest):
             os.makedirs(dest)
         url = f"https://samples.vx-underground.org/samples/Blocks/Virusshare%20Collection/Virusshare.{i}.7z"
-        print("downloading ",url)
-        download_data(url,dest)
+
+        download_zip(url)
+        unzipped = unzip(url)
+        extract_features(unzipped,dest)
