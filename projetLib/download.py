@@ -15,10 +15,10 @@ def download_data(url,dest):
     zipname = "./VirusTemp.7z"
     password = "infected"
 
-    downloader = enumerate(r.iter_content(chunk_size=8192))
-    t1 = tqdm(downloader, desc=f"Downloading zip", colour="#00ff00")
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
+        downloader = enumerate(r.iter_content(chunk_size=8192))
+        t1 = tqdm(downloader, desc=f"Downloading zip", colour="#00ff00")
         with open(zipname, 'wb') as f:
             for i,chunk in t1:  
                 f.write(chunk)
