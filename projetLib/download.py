@@ -31,7 +31,7 @@ def download_data(url,dest):
         z.extractall() 
         
     extracted = url.split("/")[-1]
-    extracted = extracted.split(".")[:-1]
+    extracted = ".".join(extracted.split(".")[:-1])
     unzipped  = f"./{extracted}/"
     os.remove(zipname)
     
