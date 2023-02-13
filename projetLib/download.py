@@ -18,9 +18,10 @@ def download_data(url,dest):
         r.raise_for_status()
         with open(zipname, 'wb') as f:
             for i,chunk in enumerate(r.iter_content(chunk_size=8192)):  
+                print(f"-- chunk downloaded {i}")
                 f.write(chunk)
                 
-    print("-- extracting ",zipname)
+    print("extracting ",zipname)
     with py7zr.SevenZipFile(zipname, mode='r', password=password) as z: 
         z.extractall() 
         
@@ -40,7 +41,7 @@ def download_data(url,dest):
 
         hashed = str(abs(hash(extracted)))
         imgpath = f"{dest}{folder}/{hashed}"
-        print(f"---- converting {filepath} to img... ({i}/{len(entries)})")
+        print(f"-- converting {filepath} to img... ({i}/{len(entries)})")
         projetLib.data.extract_img(filepath,imgpath)
         
     os.remove(zipname)
