@@ -1,5 +1,5 @@
 import torch 
-import impaintingLib as imp
+import projetLib as proj
 
 ####################################
 # Total Variation loss
@@ -18,8 +18,8 @@ def keypointLoss(x,x_hat):
     - **x** : torch.Size([batch_size, c, w, h])
     - **x_hat** : torch.Size([batch_size, c, w, h])
     - **return** : int"""
-    keypointX = imp.components.getKeypoints(x)
-    keypointX_hat = imp.components.getKeypoints(x_hat)
+    keypointX = proj.components.getKeypoints(x)
+    keypointX_hat = proj.components.getKeypoints(x_hat)
     mse = torch.nn.MSELoss()
     loss = mse(keypointX,keypointX_hat)
     if not loss :

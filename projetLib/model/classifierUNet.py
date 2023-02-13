@@ -4,8 +4,7 @@ __all__ = []
 
 import torch.nn as nn
 
-from impaintingLib.model.layer import *
-
+from projetLib.model.layer import *
 
 class ClassifierUNet(nn.Module):
     def __init__(

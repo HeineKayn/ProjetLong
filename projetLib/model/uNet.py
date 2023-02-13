@@ -18,7 +18,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-import impaintingLib.model.layer as layer
+import projetLib.model.layer as layer
 
 class DoubleConv(nn.Module):
 

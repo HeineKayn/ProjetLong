@@ -1,4 +1,4 @@
-import impaintingLib as imp
+import projetLib as proj
 import os 
 import torch
 from torchvision import transforms
@@ -16,7 +16,7 @@ def transformer():
     return transform
 
 def getTrainedModel():
-    model = imp.model.ClassifierUNet().to(device)
+    model = proj.model.ClassifierUNet().to(device)
     model.load_state_dict(torch.load(modelPath,map_location=device))
     model.eval()
     return model
