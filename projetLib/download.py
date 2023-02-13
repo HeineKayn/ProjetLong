@@ -22,7 +22,7 @@ def download_data(url,dest):
         with open(zipname, 'wb') as f:
             for i,chunk in t1:  
                 f.write(chunk)
-                t1.set_description(f'Chunk {i + 1}/{len(chunks)}')
+                t1.set_description(f'Chunk {i + 1}/{len(r)//8192}')
                 
     print("extracting ",zipname)
     with py7zr.SevenZipFile(zipname, mode='r', password=password) as z: 
