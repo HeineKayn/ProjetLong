@@ -9,6 +9,7 @@ import subprocess
 import requests 
 import shutil
 import projetLib
+from tqdm import tqdm
 
 def download_data(url,dest):
     zipname = "./VirusTemp.7z"
@@ -31,7 +32,8 @@ def download_data(url,dest):
     os.remove(zipname)
     
     entries = os.listdir(unzipped)
-    for entry in tqdm(entries, desc=f"Extracting features", colour="#00ff00"):
+    t1 = tqdm(enumerate(entries), desc=f"Extracting features", colour="#00ff00")
+    for i,entry in t1:
         filepath = unzipped + entry
         fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
     
@@ -42,8 +44,8 @@ def download_data(url,dest):
 
         hashed = str(abs(hash(entry)))
         imgpath = f"{dest}{folder}/{hashed}"
-        if i%100 == 0 : print(f"-- converting {imgpath} ... ({i}/{len(entries)})")
         projetLib.data.extract_img(filepath,imgpath)
+        t1.set_description(f'Epoch {i + 1}/{len(entries)}')
     shutil.rmtree(unzipped)
 
 def downloadAll(idstart):
