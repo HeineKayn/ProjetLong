@@ -20,13 +20,11 @@ def clientConnect():
     dir_client = file_system_client.get_directory_client(directory_name)
     dir_client.create_directory()
 
-    localfile = open(
-        "0fa1dfd31e342b448c22e3d57976fe9a7fe5e642d8f2f6496a601798adfd0e81.zip", "r")
-    filecontents = localfile
+    data = """This is a test file"""
     file_client = dir_client.create_file(
-        "0fa1dfd31e342b448c22e3d57976fe9a7fe5e642d8f2f6496a601798adfd0e81.zip")
-    file_client.append_data(data=filecontents, offset=0,
-                            length=len(filecontents))
-    file_client.flush_data(len(filecontents))
+        "YYESCAMARCHE.TXT")
+    file_client.append_data(data=data, offset=0,
+                            length=len(data))
+    file_client.flush_data(len(data))
     print("File uploaded successfully")
 clientConnect()
