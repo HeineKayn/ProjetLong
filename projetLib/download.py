@@ -39,17 +39,19 @@ def download_data(url,dest):
     t1 = tqdm(entries, total=len(entries), desc=f"Extracting features", leave=True, file=sys.stdout)
     for entry in t1:
         filepath = unzipped + entry
-        try : fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
+        try : 
+            fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
+            folder = "other"
+            if "PE" in fileType : folder = "pe"
+            elif "ELF" in fileType : folder = "elf"
+            elif "MS-DOS" in fileType : folder = "msdos"
+
+            hashed = str(abs(hash(entry)))
+            imgpath = f"{dest}{folder}/{hashed}"
+            projetLib.data.extract_img(filepath,imgpath)
         except Exception as e : print(e)
     
-        folder = "other"
-        if "PE" in fileType : folder = "pe"
-        elif "ELF" in fileType : folder = "elf"
-        elif "MS-DOS" in fileType : folder = "msdos"
-
-        hashed = str(abs(hash(entry)))
-        imgpath = f"{dest}{folder}/{hashed}"
-        projetLib.data.extract_img(filepath,imgpath)
+        
     shutil.rmtree(unzipped)
 
 def downloadAll(id,istart=0):
