@@ -3,6 +3,29 @@ import numpy as np
 from PIL import Image
 import os
 
+from torchvision.datasets.folder import ImageFolder
+from torchvision import transforms
+from torch.utils.data import DataLoader
+import torch
+
+def getImageLoader(file:str,resize,doShuffle=True):
+    process = transforms.Compose([
+            transforms.Resize(resize), 
+            transforms.ToTensor()
+    ])
+    dataset = ImageFolder(file, process)
+    return DataLoader(dataset, num_workers=2, batch_size=16, shuffle=doShuffle)
+
+def allImageDataset(extensions,resize):
+    datasets = []
+    imgpath = "./data/images/"
+    for folder in os.listdir(imgpath):
+        newpath = imgpath + folder + "/"
+        for ext in extensions :
+            extpath = newpath + ext + "/"
+            if os.path.exists(extpath) : datasets.append(getImageLoader(extpath,resize))
+    return torch.utils.data.ConcatDataset(datasets)
+
 # Serait mieux si file image et renvoie image ?
 def crop_img(path,h=256, w=256):
     with Image.open(path) as img:
