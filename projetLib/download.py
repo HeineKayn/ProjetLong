@@ -10,6 +10,7 @@ import requests
 import shutil
 import projetLib
 from tqdm import tqdm
+import sys
 
 def download_data(url,dest):
     zipname = "./VirusTemp.7z"
@@ -17,12 +18,13 @@ def download_data(url,dest):
 
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
-        chunks = r.iter_content(chunk_size=8192)
-        t1 = tqdm(enumerate(chunks), desc=f"Downloading zip", colour="#00ff00")
+        file_size = int(r.headers['Content-Length'])
+        chunk_size = 8192
+        num_bars = int(file_size / chunk_size)
+        t1 = tqdm(r.iter_content(chunk_size=chunk_size), total=num_bars, unit='KB', desc=f"Downloading zip", leave=True, file=sys.stdout)
         with open(zipname, 'wb') as f:
-            for i,chunk in t1:  
+            for chunk in t1:  
                 f.write(chunk)
-                t1.set_description(f'Chunk {i + 1}/{len(r.content)//8192}')
                 
     print("extracting ",zipname)
     with py7zr.SevenZipFile(zipname, mode='r', password=password) as z: 
