@@ -53,6 +53,7 @@ def extract_features(unzipped,dest):
             imgpath = f"{dest}{folder}/{hashed}"
             projetLib.data.extract_img(filepath,imgpath)
         except Exception as e : print(e)
+        os.remove(filepath)
     shutil.rmtree(unzipped)
 
 def downloadAll(id,istart=0):
