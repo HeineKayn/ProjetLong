@@ -18,7 +18,7 @@ def download_data(url,dest):
         r.raise_for_status()
         with open(zipname, 'wb') as f:
             for i,chunk in enumerate(r.iter_content(chunk_size=8192)):  
-                print(f"-- chunk downloaded {i}")
+                if i%100 == 0 : print(f"-- chunk downloaded {i}")
                 f.write(chunk)
                 
     print("extracting ",zipname)
@@ -31,18 +31,18 @@ def download_data(url,dest):
     os.remove(zipname)
     
     entries = os.listdir(unzipped)
-    for i,entry in enumerate(entries):
+    for entry in tqdm(entries, desc=f"Extracting features", colour="#00ff00"):
         filepath = unzipped + entry
-        fileType = subprocess.check_output(filepath, shell=True).decode()
+        fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
     
         folder = "other"
         if "PE" in fileType : folder = "pe"
         elif "ELF" in fileType : folder = "elf"
         elif "MS-DOS" in fileType : folder = "msdos"
 
-        hashed = str(abs(hash(extracted)))
+        hashed = str(abs(hash(entry)))
         imgpath = f"{dest}{folder}/{hashed}"
-        print(f"-- converting {filepath} to {imgpath} ... ({i}/{len(entries)})")
+        if i%100 == 0 : print(f"-- converting {imgpath} ... ({i}/{len(entries)})")
         projetLib.data.extract_img(filepath,imgpath)
     shutil.rmtree(unzipped)
 

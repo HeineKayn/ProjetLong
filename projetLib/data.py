@@ -29,9 +29,8 @@ def extract_img(filepath,imagepath, doSave=True):
         img = Image.fromarray(img_arr.astype('uint8'), 'L')
         
         image_directory = "/".join(imagepath.split("/")[:-1])
-        if doSave and not os.folder.exists(image_directory):
-            os.makedirs(image_directory)
-            img.save(imagepath)
-            return imagepath
-        else : 
-            return img
+        if doSave :
+            if os.path.exists(image_directory):
+                os.makedirs(image_directory)
+            try : img.save(imagepath + ".jpg")
+            except Exception as e : print(e)
