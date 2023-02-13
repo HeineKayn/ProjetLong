@@ -52,12 +52,12 @@ def download_data(url,dest):
     shutil.rmtree(unzipped)
 
 def downloadAll(id,istart=0):
-    base = "./projetLib/data/images"
+    base = "./data/images"
     for i in reversed(range(id+3*istart,460,3)):
         i = str(i)
         i = "0"*(5-len(i)) + i
         dest = f"{base}/Virusshare{i}/"
-        if os.path.exists(dest):
+        if not os.path.exists(dest):
             os.makedirs(dest)
         url = f"https://samples.vx-underground.org/samples/Blocks/Virusshare%20Collection/Virusshare.{i}.7z"
         print("downloading ",url)

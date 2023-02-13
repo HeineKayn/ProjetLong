@@ -30,7 +30,7 @@ def extract_img(filepath,imagepath, doSave=True):
         
         image_directory = "/".join(imagepath.split("/")[:-1])
         if doSave :
-            if os.path.exists(image_directory):
+            if not os.path.exists(image_directory):
                 os.makedirs(image_directory)
             try : img.save(imagepath + ".jpg")
             except Exception as e : print(e)
