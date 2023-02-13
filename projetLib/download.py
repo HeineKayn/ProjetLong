@@ -14,13 +14,15 @@ from tqdm import tqdm
 def download_data(url,dest):
     zipname = "./VirusTemp.7z"
     password = "infected"
-     
+
+    downloader = enumerate(r.iter_content(chunk_size=8192))
+    t1 = tqdm(downloader, desc=f"Downloading zip", colour="#00ff00")
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
         with open(zipname, 'wb') as f:
-            for i,chunk in enumerate(r.iter_content(chunk_size=8192)):  
-                if i%100 == 0 : print(f"-- chunk downloaded {i}")
+            for i,chunk in t1:  
                 f.write(chunk)
+                t1.set_description(f'Chunk {i + 1}/{len(downloader)}')
                 
     print("extracting ",zipname)
     with py7zr.SevenZipFile(zipname, mode='r', password=password) as z: 
@@ -45,7 +47,7 @@ def download_data(url,dest):
         hashed = str(abs(hash(entry)))
         imgpath = f"{dest}{folder}/{hashed}"
         projetLib.data.extract_img(filepath,imgpath)
-        t1.set_description(f'Epoch {i + 1}/{len(entries)}')
+        t1.set_description(f'Fichier {i + 1}/{len(entries)}')
     shutil.rmtree(unzipped)
 
 def downloadAll(idstart):
