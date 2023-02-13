@@ -1,69 +1,37 @@
-from torchvision.datasets.folder import ImageFolder
-from torchvision import transforms
-from torch.utils.data import DataLoader
-import torch
-
-import random
-
-import requests 
-import shutil
-import py7zr
+from math import sqrt,ceil
+import numpy as np
+from PIL import Image
 import os
-import subprocess
 
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# Serait mieux si file image et renvoie image ?
+def crop_img(path,h=256, w=256):
+    with Image.open(path) as img:
+        img_arr = np.array(img)
+        h2,w2 = img_arr.shape
+        img_arr = list(np.reshape(img_arr, (h2*w2)))
+        img_arr += [0]*(h*w - len(img_arr))
+        img_arr = img_arr[:h*w]
+        img_arr = np.reshape(np.array(img_arr), (h,w))
+        img     = Image.fromarray(img_arr.astype('uint8'), 'L')
+        return img
 
-def download_data(url,dest):
-    zipfile = dest + "VirusTemp.7z"
-    password = "infected"
-     
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open(zipfile, 'wb') as f:
-            for i,chunk in enumerate(r.iter_content(chunk_size=8192)):  
-                f.write(chunk)
-                
-    with py7zr.SevenZipFile(zipfile, mode='r', password=password) as z: 
-        z.extractall() 
+def extract_img(filepath,imagepath, doSave=True):
+    with open(filepath, 'rb') as img_set:
+        img_arr = list(img_set.read())
+        sq   = ceil(sqrt(len(img_arr)))
+        rest = (sq*sq)-len(img_arr)
+        img_arr += [0]*rest
         
-    extracted = url.split("/")[-1]
-    extracted = extracted.split(".")[:-1]
-    unzipped = dest + extracted + "/"
-    
-    entries = os.listdir(dest)
-    for entry in entries:
-        filename = unzipped + entry
-        fileType = subprocess.check_output(filename, shell=True).decode()
-    
-        folder = "other"
-        if "PE" in fileType : folder = "pe"
-        elif "ELF" in fileType : folder = "elf"
-        elif "MS-DOS" in fileType : folder = "msdos"
-
-        hashed = hash(extracted)
-        img_path = f"{dest}{folder}/{hashed}.png"
-        # convert to img
+        img_arr = np.array(img_arr)
+        img_arr = img_arr.astype('float32')
+        #img_arr /= 255
+        img_arr = np.reshape(img_arr, (sq,sq))
+        img = Image.fromarray(img_arr.astype('uint8'), 'L')
         
-    os.remove(zipfile)
-    shutil.rmtree(unzipped)
-
-def downloadDataset():
-
-    for filenumber in reversed(range(0, 458)):
-        filenumber = 15
-        filenumber = str(filenumber)
-        filenumber = "0"*(4-len(filenumber)) + filenumber
-        url = "https://samples.vx-underground.org/samples/Blocks/Virusshare%20Collection/Virusshare.{filenumber}.7z"
-        download_data(url,"../data/images")
-
-# def getDataset(file:str,factorResize=1,doCrop=True):
-#     process = transforms.Compose([
-#             transforms.Resize(crop), 
-#             transforms.ToTensor()
-#     ])
-#     return ImageFolder(file, process)
-
-# def getTestImages(file,factorResize=1,doCrop=True,doShuffle=False):
-#     dataset = getDataset(file,factorResize,doCrop)
-#     dataset = DataLoader(dataset, num_workers=2, batch_size=16, shuffle=doShuffle)
-#     return next(iter(dataset))[0]
+        image_directory = "/".join(imagepath.split("/")[:-1])
+        if doSave and not os.folder.exists(image_directory):
+            os.makedirs(image_directory)
+            img.save(imagepath)
+            return imagepath
+        else : 
+            return img
