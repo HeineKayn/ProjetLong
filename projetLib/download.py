@@ -1,10 +1,3 @@
-from torchvision.datasets.folder import ImageFolder
-from torchvision import transforms
-from torch.utils.data import DataLoader
-import torch
-
-import random
-
 import requests 
 import shutil
 import py7zr
