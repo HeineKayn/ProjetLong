@@ -49,6 +49,7 @@ runName = "first"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = proj.model.GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
+model = model.to(device) 
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=0.001)
 
 # tuples de loss et leur coef
