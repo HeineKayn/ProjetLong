@@ -5,6 +5,7 @@ from torch.utils.data import Subset
 import torchvision
 from tqdm import tqdm
 import sys
+from torch.nn import BCEWithLogitsLoss
 
 def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, lrDecrease=True):
     net.train()
@@ -22,9 +23,11 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
             x = x.to(device)
             with torch.set_grad_enabled(True):
                 outputs = net(x)
-                loss = 1e-5
-                for criterion,coef in losses : 
-                    loss += criterion(outputs, x)*coef
+                # loss = 1e-5
+                # for criterion,coef in losses : 
+                #     loss += criterion(outputs, x)*coef
+                criterion = BCEWithLogitsLoss() #binary cross entropy with sigmoid, so no need to use sigmoid in the model
+                loss = criterion(outputs, x)
                 loss /= accum_iter
                 running_loss.append(loss.item())
                 loss.backward()
