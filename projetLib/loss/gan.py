@@ -1,5 +1,5 @@
 import torch
-import impaintingLib as imp
+import projetLib as proj
 
 __all__ = ["ganLoss"]
 

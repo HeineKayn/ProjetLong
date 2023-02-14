@@ -3,28 +3,31 @@ import numpy as np
 from PIL import Image
 import os
 
-# from torchvision.datasets.folder import ImageFolder
-# from torchvision import transforms
-# from torch.utils.data import DataLoader
-# import torch
+from torchvision.datasets.folder import ImageFolder
+from torchvision import transforms
+import torch
+from torch.utils.data import Subset
 
-# def getImageLoader(file:str,resize,doShuffle=True):
-#     process = transforms.Compose([
-#             transforms.Resize(resize), 
-#             transforms.ToTensor()
-#     ])
-#     dataset = ImageFolder(file, process)
-#     return DataLoader(dataset, num_workers=2, batch_size=16, shuffle=doShuffle)
+def getImageLoader(file:str,resize):
+    process = transforms.Compose([
+            transforms.Grayscale(),
+            transforms.Resize(resize), 
+            transforms.ToTensor()
+            #  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
+    return ImageFolder(file, process)
 
-# def allImageDataset(extensions,resize):
-#     datasets = []
-#     imgpath = "./data/images/"
-#     for folder in os.listdir(imgpath):
-#         newpath = imgpath + folder + "/"
-#         for ext in extensions :
-#             extpath = newpath + ext + "/"
-#             if os.path.exists(extpath) : datasets.append(getImageLoader(extpath,resize))
-#     return torch.utils.data.ConcatDataset(datasets)
+def allImageDataset(resize,whitelist=["pe","msdos","elf","other"]):
+    datasets = []
+    imgpath = "./data/images/"
+    for folder in os.listdir(imgpath):
+        newpath   = imgpath + folder + "/"
+        dataset   = getImageLoader(newpath,resize)
+        idwhitelist = [dataset.class_to_idx[x] for x in whitelist if x in dataset.class_to_idx.keys()]
+        idx       = [i for i in range(len(dataset)) if dataset.imgs[i][1] in idwhitelist]
+        dataset   = Subset(dataset, idx)
+        datasets.append(dataset)
+    return torch.utils.data.ConcatDataset(datasets)
 
 # Serait mieux si file image et renvoie image ?
 def crop_img(path,h=256, w=256):
