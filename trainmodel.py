@@ -29,8 +29,8 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
                 outputs = (outputs-torch.mean(outputs))/torch.std(outputs)
                 print(outputs)
                 print(y)
-                predicted = torch.argmax(outputs, dim=1)
-                print(predicted)
+                # predicted = torch.argmax(outputs, dim=1)
+                # print(predicted)
                 loss = 1e-5
                 for criterion,coef in losses : 
                     loss += criterion(outputs, y)*coef
