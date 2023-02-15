@@ -23,11 +23,9 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
             x = x.to(device)
             with torch.set_grad_enabled(True):
                 outputs = net(x)
-                # loss = 1e-5
-                # for criterion,coef in losses : 
-                #     loss += criterion(outputs, x)*coef
-                criterion = BCEWithLogitsLoss() #binary cross entropy with sigmoid, so no need to use sigmoid in the model
-                loss = criterion(outputs, x)
+                loss = 1e-5
+                for criterion,coef in losses : 
+                    loss += criterion(outputs, x)*coef
                 loss /= accum_iter
                 running_loss.append(loss.item())
                 loss.backward()
@@ -58,6 +56,6 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=0.001)
 # tuples de loss et leur coef
 losses = [#(imp.loss.perceptualVGG,1),
           #(imp.loss.totalVariation,1),
-          (torch.nn.L1Loss(),1)]
+          (BCEWithLogitsLoss(),1)]
 
 train_malware(model, optimizer, dataloader, losses, runName=runName, epochs=5)
