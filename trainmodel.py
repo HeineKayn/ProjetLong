@@ -23,7 +23,7 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
             x = x.to(device)
             with torch.set_grad_enabled(True):
                 outputs = net(x)
-                outputs = torch.reshape(outputs,(32))
+                outputs = torch.reshape(outputs,(32,))
                 loss = 1e-5
                 for criterion,coef in losses : 
                     loss += criterion(outputs, y)*coef
