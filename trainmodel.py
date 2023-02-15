@@ -6,6 +6,7 @@ import torchvision
 from tqdm import tqdm
 import sys
 from torch.nn import BCEWithLogitsLoss
+from statistics import mean
 
 def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, lrDecrease=True):
     net.train()
