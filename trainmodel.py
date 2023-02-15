@@ -25,20 +25,25 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
             y = y.to(device).float()
             with torch.set_grad_enabled(True):
                 outputs = net(x)
-                outputs = torch.reshape(outputs,(32,))
-                outputs = (outputs-torch.mean(outputs))/torch.std(outputs)
-                # predicted = torch.argmax(outputs, dim=1)
-                # print(predicted)
-                loss = 1e-5
-                for criterion,coef in losses : 
-                    loss += criterion(outputs, y)*coef
-                loss /= accum_iter
-                running_loss.append(loss.item())
-                loss.backward()
-                if ((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == len(t2)):
-                    optimizer.step()
-                    optimizer.zero_grad()
-                t2.set_description(f'Epoch {epoch}, training loss: {mean(running_loss)}, LR : {current_lr}, epoch {epoch + 1}/{epochs}')
+
+                try :
+                    outputs = torch.reshape(outputs,(32,))
+                    outputs = (outputs-torch.mean(outputs))/torch.std(outputs)
+                    # predicted = torch.argmax(outputs, dim=1)
+                    # print(predicted)
+                    loss = 1e-5
+                    for criterion,coef in losses : 
+                        loss += criterion(outputs, y)*coef
+                    loss /= accum_iter
+                    running_loss.append(loss.item())
+                    loss.backward()
+                    if ((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == len(t2)):
+                        optimizer.step()
+                        optimizer.zero_grad()
+                    t2.set_description(f'Epoch {epoch}, training loss: {mean(running_loss)}, LR : {current_lr}, epoch {epoch + 1}/{epochs}')
+                except Exception as e:
+                    print(e)
+                    print(outputs.shape)
         t1.set_description(f'Epoch {epoch + 1}/{epochs}, LR : {current_lr}')
 
         if lrDecrease :        
