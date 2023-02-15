@@ -21,6 +21,7 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
         t2 = tqdm(loader, leave=False, colour="#005500", file=sys.stdout) 
         for batch_idx,(x,y) in enumerate(t2):
             x = x.to(device)
+            y = y.to(device)
             with torch.set_grad_enabled(True):
                 outputs = net(x)
                 outputs = torch.reshape(outputs,(32,))
