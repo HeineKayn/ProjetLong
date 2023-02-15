@@ -54,7 +54,7 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
 
 size = (224,224)
 batch_size = 32
-test_proportion = 0.1
+test_proportion = 0.8
 
 dataset = proj.data.allImageDataset(size) # ,["msdos"]
 lenTrainTest = int(len(dataset)*(1-test_proportion))
