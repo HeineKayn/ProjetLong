@@ -53,7 +53,7 @@ test_proportion = 0.1
 
 dataset = proj.data.allImageDataset(size) # ,["msdos"]
 lenTrainTest = int(len(dataset)*(1-test_proportion))
-restDataset  = len(lenTrainTest)%batch_size
+restDataset  = lenTrainTest%batch_size
 trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset])
 
 dataloader = DataLoader(dataset, num_workers=2, batch_size=batch_size, shuffle=True)
