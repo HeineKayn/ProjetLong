@@ -24,7 +24,6 @@ def allImageDataset(resize,whitelist=["pe","msdos","elf","other"]):
     for folder in os.listdir(imgpath):
         newpath   = imgpath + folder + "/"
         dataset   = getImageLoader(newpath,resize)
-        print(dataset.class_to_idx)
         idwhitelist = [dataset.class_to_idx[x] for x in whitelist if x in dataset.class_to_idx.keys()]
         if benign in dataset.class_to_idx.keys() : idbenign = dataset.class_to_idx[benign]
         else : idbenign = -1
@@ -32,9 +31,7 @@ def allImageDataset(resize,whitelist=["pe","msdos","elf","other"]):
         for i in range(len(dataset)):
             if dataset.imgs[i][1] in idwhitelist : dataset.imgs[i] = (dataset.imgs[i][0],0)
             elif dataset.imgs[i][1] == idbenign : dataset.imgs[i] = (dataset.imgs[i][0],1)
-        print(idwhitelist+[idbenign])
         dataset = Subset(dataset, idx)
-        print(len(dataset))
         datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
 
