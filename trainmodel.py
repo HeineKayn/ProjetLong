@@ -42,8 +42,9 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
                         optimizer.zero_grad()
                     t2.set_description(f'Epoch {epoch}, training loss: {mean(running_loss)}, LR : {current_lr}, epoch {epoch + 1}/{epochs}')
                 except Exception as e:
-                    print(e)
-                    print(outputs.shape)
+                    pass
+                    # print(e)
+                    # print(outputs.shape)
         t1.set_description(f'Epoch {epoch + 1}/{epochs}, LR : {current_lr}')
 
         if lrDecrease :        
@@ -55,15 +56,18 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
 size = (224,224)
 batch_size = 32
 test_proportion = 0.2
+seed = 1
+runName = "first"
 
 dataset = proj.data.allImageDataset(size) # ,["msdos"]
-lenTrainTest = int(len(dataset)*test_proportion)
+lenTrainTest = int(len(dataset)*(1-test_proportion))
 restDataset  = lenTrainTest%batch_size
-print(lenTrainTest-restDataset,(lenTrainTest-restDataset)%batch_size)
-trainDataset,testDataset = torch.utils.data.split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset])
+g = torch.Generator()
+if seed != 0 :
+    g.manual_seed(seed)
 
+trainDataset,testDataset = torch.utils.data.split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
 dataloader = DataLoader(dataset, num_workers=2, batch_size=batch_size, shuffle=False)
-runName = "first"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = proj.model.GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
