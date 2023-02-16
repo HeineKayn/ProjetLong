@@ -54,15 +54,15 @@ def train_malware(net, optimizer, loader, losses, runName="default", epochs=5, l
 
 size = (224,224)
 batch_size = 32
-test_proportion = 0.8
+test_proportion = 0.2
 
 dataset = proj.data.allImageDataset(size) # ,["msdos"]
-lenTrainTest = int(len(dataset)*(1-test_proportion))
+lenTrainTest = int(len(dataset)*test_proportion)
 restDataset  = lenTrainTest%batch_size
 print(lenTrainTest-restDataset,(lenTrainTest-restDataset)%batch_size)
-trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset])
+trainDataset,testDataset = torch.utils.data.split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset])
 
-dataloader = DataLoader(dataset, num_workers=2, batch_size=batch_size, shuffle=True)
+dataloader = DataLoader(dataset, num_workers=2, batch_size=batch_size, shuffle=False)
 runName = "first"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
