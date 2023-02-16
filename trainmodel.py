@@ -66,7 +66,7 @@ g = torch.Generator()
 if seed != 0 :
     g.manual_seed(seed)
 
-trainDataset,testDataset = torch.utils.data.split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
+trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
 dataloader = DataLoader(dataset, num_workers=2, batch_size=batch_size, shuffle=False)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
