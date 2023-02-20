@@ -42,7 +42,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
 
         accuracy = test_malware(net, testloader)
         with open("./last_results.txt","a") as f:
-            f.write(f"{runName} - Epoch : {epoch} - Accuracy {accuracy} - Loss : {running_loss} LR : {current_lr}")
+            f.write(f"{runName} - Epoch : {epoch} - Accuracy {accuracy} - Loss : {running_loss[-1]} LR : {current_lr}")
 
         t1.set_description(f'Epoch {epoch + 1}/{epochs}, Accuracy {accuracy}, LR : {current_lr}')
         if lrDecrease :        
