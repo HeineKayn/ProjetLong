@@ -1,6 +1,6 @@
 from math import sqrt,ceil
 import numpy as np
-from PIL import Image
+from PIL import Image,ImageFile
 import os
 
 from torchvision.datasets.folder import ImageFolder
@@ -15,6 +15,8 @@ load_dotenv()
 data_path = os.getenv("data_path")
 imgpath = data_path + "/images/"
 benign = "Benign"
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def getImageLoader(file:str,resize):
     process = transforms.Compose([
