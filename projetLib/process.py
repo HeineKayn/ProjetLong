@@ -52,7 +52,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
 def test_malware(net, testloader):
     with torch.no_grad():
         net.eval()
-        matrix = torch.zeros((2,2))
+        matrix = torch.zeros((2,2)).to(device)
         confmat = ConfusionMatrix(task="binary", num_classes=2)
         for x, y in testloader : 
             x = x.to(device)
