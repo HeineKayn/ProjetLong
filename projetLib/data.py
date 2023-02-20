@@ -7,6 +7,7 @@ from torchvision.datasets.folder import ImageFolder
 from torchvision import transforms
 import torch
 from torch.utils.data import Subset
+from torch.utils.data import DataLoader
 
 from dotenv import load_dotenv
 
@@ -23,22 +24,55 @@ def getImageLoader(file:str,resize):
     ])
     return ImageFolder(file, process)
 
-def allImageDataset(resize,whitelist=["pe","msdos","elf","other"]):
+# def allImageDataset(resize,whitelist=["pe","msdos","elf","other"]):
+#     datasets = []
+#     benign = "benign"
+#     for folder in os.listdir(imgpath):
+#         newpath   = imgpath + folder + "/"
+#         dataset   = getImageLoader(newpath,resize)
+#         idwhitelist = [dataset.class_to_idx[x] for x in whitelist if x in dataset.class_to_idx.keys()]
+#         if benign in dataset.class_to_idx.keys() : idbenign = dataset.class_to_idx[benign]
+#         else : idbenign = -1
+#         idx = [i for i in range(len(dataset)) if dataset.imgs[i][1] in idwhitelist+[idbenign]]
+#         for i in range(len(dataset)):
+#             if dataset.imgs[i][1] in idwhitelist : dataset.imgs[i] = (dataset.imgs[i][0],0)
+#             elif dataset.imgs[i][1] == idbenign : dataset.imgs[i] = (dataset.imgs[i][0],1)
+#         dataset = Subset(dataset, idx)
+#         datasets.append(dataset)
+#     return torch.utils.data.ConcatDataset(datasets)
+
+def get_malware_dataset(resize,whitelist):
     datasets = []
-    benign = "benign"
     for folder in os.listdir(imgpath):
         newpath   = imgpath + folder + "/"
         dataset   = getImageLoader(newpath,resize)
         idwhitelist = [dataset.class_to_idx[x] for x in whitelist if x in dataset.class_to_idx.keys()]
-        if benign in dataset.class_to_idx.keys() : idbenign = dataset.class_to_idx[benign]
-        else : idbenign = -1
-        idx = [i for i in range(len(dataset)) if dataset.imgs[i][1] in idwhitelist+[idbenign]]
+        idx = [i for i in range(len(dataset)) if dataset.imgs[i][1] in idwhitelist]
         for i in range(len(dataset)):
             if dataset.imgs[i][1] in idwhitelist : dataset.imgs[i] = (dataset.imgs[i][0],0)
-            elif dataset.imgs[i][1] == idbenign : dataset.imgs[i] = (dataset.imgs[i][0],1)
         dataset = Subset(dataset, idx)
         datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
+
+def get_benign_dataset(resize):
+    newpath   = imgpath + "benign/"
+    dataset   = getImageLoader(newpath,resize)
+    for i in range(len(dataset)):
+        dataset.imgs[i] = (dataset.imgs[i][0],0)
+    return dataset
+
+def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,extensions=["pe","msdos","elf","other"]):
+    dataset = get_malware_dataset(resize,extensions)
+    lenTrainTest = int(len(dataset)*(1-test_proportion))
+    restDataset  = lenTrainTest%batch_size
+    g = torch.Generator()
+    if seed != 0 :
+        g.manual_seed(seed)
+    trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
+    benign = get_benign_dataset(resize)
+    testDataset = torch.utils.data.ConcatDataset([testDataset,benign])
+    return trainDataset,testDataset
+
 
 # Serait mieux si file image et renvoie image ?
 def crop_img(path,h=256, w=256):

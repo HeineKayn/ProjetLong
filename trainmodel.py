@@ -8,20 +8,13 @@ import sys
 from torch.nn import BCEWithLogitsLoss
 from statistics import mean
 
-size = (224,224)
-batch_size = 32
-test_proportion = 0.2
-seed = 1
 runName = "first"
+batch_size = 32
 
-dataset = proj.data.allImageDataset(size) # ,["msdos"]
-lenTrainTest = int(len(dataset)*(1-test_proportion))
-restDataset  = lenTrainTest%batch_size
-g = torch.Generator()
-if seed != 0 :
-    g.manual_seed(seed)
+trainDataset, testDataset = proj.data.getTrainTest(
+    resize=(224,224), batch_size=batch_size, seed=1,
+    test_proportion=0.2, extensions=["pe","msdos","elf","other"])
 
-trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
 trainloader = DataLoader(trainDataset, num_workers=2, batch_size=batch_size, shuffle=True)
 testloader = DataLoader(testDataset, num_workers=2, batch_size=batch_size, shuffle=True)
 
