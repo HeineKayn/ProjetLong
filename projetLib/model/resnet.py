@@ -8,17 +8,7 @@ class GrayscaleResNet(torchvision.models.resnet.ResNet):
     def __init__(self, block, layers, num_classes=1):
         self.inplanes = 64
         super(GrayscaleResNet, self).__init__(block, layers)
-
-        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3,
-                               bias=False)
-        # self.bn1 = nn.BatchNorm2d(64)
-        # self.relu = nn.ReLU(inplace=True)
-        # self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        # self.layer1 = self._make_layer(block, 64, layers[0])
-        # self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
-        # self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
-        # self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
-        # self.avgpool = nn.AvgPool2d(7, stride=1)
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
 # model= GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])

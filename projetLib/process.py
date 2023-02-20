@@ -62,4 +62,4 @@ def test_malware(net, testloader):
             outputs = m(outputs)
             positive += torch.sum(outputs == y)
         positive /= len(testloader.dataset)
-        print(positive)
+        print(positive*100)
