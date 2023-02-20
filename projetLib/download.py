@@ -50,7 +50,7 @@ def extract_features(unzipped,dest):
         try : 
             fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
             folder = "other"
-            if "PE" in fileType : folder = "pe"
+            if "PE" in fileType    : folder = "pe"
             elif "ELF" in fileType : folder = "elf"
             # elif "MS-DOS" in fileType : folder = "msdos"
 
