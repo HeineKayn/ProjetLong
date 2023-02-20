@@ -55,6 +55,8 @@ def test_malware(net, testloader):
         matrix = torch.zeros((2,2))
         confmat = ConfusionMatrix(task="binary", num_classes=2)
         for x, y in testloader : 
+            x = x.to(device)
+            y = y.to(device)
             outputs = net(x)
             outputs = torch.reshape(outputs,(len(y),))
             matrix  += confmat(outputs, y)
