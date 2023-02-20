@@ -36,7 +36,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
                     if ((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == len(t2)):
                         optimizer.step()
                         optimizer.zero_grad()
-                    t2.set_description(f'Training loss: {mean(running_loss)}, LR : {current_lr}, epoch {epoch + 1}/{epochs}')
+                    t2.set_description(f'Training loss: {mean(running_loss)*1000:.5f}, LR : {current_lr}, epoch {epoch + 1}/{epochs}')
                 except Exception as e:
                     pass
 
