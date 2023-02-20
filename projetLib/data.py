@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 data_path = os.getenv("data_path")
-imgpath = data_path + "/images"
+imgpath = data_path + "/images/"
 
 def getImageLoader(file:str,resize):
     process = transforms.Compose([

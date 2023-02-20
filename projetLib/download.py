@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 data_path = os.getenv("data_path")
-base = data_path + "/images"
+base = data_path + "/images/"
 zipname = "./VirusTemp.7z"
 
 def download_zip(url):
