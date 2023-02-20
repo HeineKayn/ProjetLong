@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 data_path = os.getenv("data_path")
 imgpath = data_path + "/images/"
-benign = "benign"
+benign = "Benign"
 
 def getImageLoader(file:str,resize):
     process = transforms.Compose([

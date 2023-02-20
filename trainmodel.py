@@ -11,6 +11,10 @@ from statistics import mean
 runName = "first"
 batch_size = 32
 
+epochs = 5
+if len(sys.argv)>1:
+    epochs = int(sys.argv[1])
+
 trainDataset, testDataset = proj.data.getTrainTest(
     resize=(224,224), batch_size=batch_size, seed=1,
     test_proportion=0.2, extensions=["pe","msdos","elf","other"])
@@ -26,6 +30,6 @@ losses = [#(imp.loss.perceptualVGG,1),
           #(imp.loss.totalVariation,1),
           (BCEWithLogitsLoss(),1)]
 
-proj.process.train_malware(CNNresnet, optimizer, trainloader, losses, testloader, runName=runName, epochs=5)
+proj.process.train_malware(CNNresnet, optimizer, trainloader, losses, testloader, runName=runName, epochs=epochs)
 final_acc = proj.process.test_malware(CNNresnet, testloader)
 print("Accuracy Finale : {}".format(final_acc))
