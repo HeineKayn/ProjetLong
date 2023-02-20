@@ -57,8 +57,6 @@ def test_malware(net, testloader):
         for x, y in testloader : 
             outputs = net(x)
             outputs = torch.reshape(outputs,(len(y),))
-            m = nn.Sigmoid()
-            outputs = m(outputs)
             matrix  += confmat(outputs, y)
         (tp,fp),(fn,tn) = matrix
         accuracy = (tp+tn)/(tp+tn+fp+fn) 

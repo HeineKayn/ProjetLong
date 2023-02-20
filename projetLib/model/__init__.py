@@ -1,1 +1,1 @@
-from .resnet import GrayscaleResNet
+from .resnet import getCNNresnet

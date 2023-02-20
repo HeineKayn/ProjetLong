@@ -11,11 +11,13 @@ class GrayscaleResNet(torchvision.models.resnet.ResNet):
         self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
-basicResnet = GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
-CNNresnet = nn.Sequential(
-    basicResnet,
-    nn.Softmax(1)
-)
+def getCNNresnet():
+    basicResnet = GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
+    CNNresnet = nn.Sequential(
+        basicResnet,
+        nn.Sigmoid()
+    )
+    return CNNresnet
 
 # model= GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
 # [3, 4, 6, 3] => https://github.com/pytorch/vision/blob/791c172a337d98012018f98ffde93b1020ba3ed5/torchvision/models/resnet.py#L236

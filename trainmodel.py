@@ -1,9 +1,6 @@
 import projetLib as proj
 from torch.utils.data import DataLoader
 import torch
-from torch.utils.data import Subset
-import torchvision
-from tqdm import tqdm
 import sys
 from torch.nn import BCEWithLogitsLoss
 from statistics import mean
@@ -18,11 +15,12 @@ if len(sys.argv)>1:
 trainDataset, testDataset = proj.data.getTrainTest(
     resize=(224,224), batch_size=batch_size, seed=1,
     test_proportion=0.2, extensions=["pe","msdos","elf","other"])
+print(f"Images de train {len(trainDataset)}, Images de test {len(testDataset)}")
 
 trainloader = DataLoader(trainDataset, num_workers=2, batch_size=batch_size, shuffle=True)
 testloader = DataLoader(testDataset, num_workers=2, batch_size=batch_size, shuffle=True)
 
-CNNresnet = proj.model.GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
+CNNresnet =  proj.model.getCNNresnet()
 optimizer = torch.optim.Adam(CNNresnet.parameters(), lr=1e-3, weight_decay=0.001)
 
 # tuples de loss et leur coef
