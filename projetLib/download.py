@@ -12,6 +12,11 @@ import projetLib
 from tqdm import tqdm
 import sys
 
+from dotenv import load_dotenv
+
+load_dotenv()
+data_path = os.getenv("data_path")
+base = data_path + "/images"
 zipname = "./VirusTemp.7z"
 
 def download_zip(url):
@@ -57,7 +62,6 @@ def extract_features(unzipped,dest):
     shutil.rmtree(unzipped)
 
 def downloadAll(id,istart=0):
-    base = "./data/images"
     for i in reversed(range(id,460-3*istart,3)):
         i = str(i)
         i = "0"*(5-len(i)) + i

@@ -8,6 +8,12 @@ from torchvision import transforms
 import torch
 from torch.utils.data import Subset
 
+from dotenv import load_dotenv
+
+load_dotenv()
+data_path = os.getenv("data_path")
+imgpath = data_path + "/images"
+
 def getImageLoader(file:str,resize):
     process = transforms.Compose([
             transforms.Grayscale(),
@@ -20,7 +26,6 @@ def getImageLoader(file:str,resize):
 def allImageDataset(resize,whitelist=["pe","msdos","elf","other"]):
     datasets = []
     benign = "benign"
-    imgpath = "./data/images/"
     for folder in os.listdir(imgpath):
         newpath   = imgpath + folder + "/"
         dataset   = getImageLoader(newpath,resize)
