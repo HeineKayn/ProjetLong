@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 data_path = os.getenv("data_path")
 imgpath = data_path + "/images/"
+benign = "benign"
 
 def getImageLoader(file:str,resize):
     process = transforms.Compose([
@@ -44,22 +45,27 @@ def getImageLoader(file:str,resize):
 def get_malware_dataset(resize,whitelist):
     datasets = []
     for folder in os.listdir(imgpath):
-        newpath   = imgpath + folder + "/"
-        dataset   = getImageLoader(newpath,resize)
-        idwhitelist = [dataset.class_to_idx[x] for x in whitelist if x in dataset.class_to_idx.keys()]
-        idx = [i for i in range(len(dataset)) if dataset.imgs[i][1] in idwhitelist]
-        for i in range(len(dataset)):
-            if dataset.imgs[i][1] in idwhitelist : dataset.imgs[i] = (dataset.imgs[i][0],0)
-        dataset = Subset(dataset, idx)
-        datasets.append(dataset)
+        if folder != benign :
+            newpath   = imgpath + folder + "/"
+            dataset   = getImageLoader(newpath,resize)
+            idwhitelist = [dataset.class_to_idx[x] for x in whitelist if x in dataset.class_to_idx.keys()]
+            idx = [i for i in range(len(dataset)) if dataset.imgs[i][1] in idwhitelist]
+            for i in range(len(dataset)):
+                if dataset.imgs[i][1] in idwhitelist : dataset.imgs[i] = (dataset.imgs[i][0],1)
+            dataset = Subset(dataset, idx)
+            datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
 
 def get_benign_dataset(resize):
-    newpath   = imgpath + "benign/"
-    dataset   = getImageLoader(newpath,resize)
-    for i in range(len(dataset)):
-        dataset.imgs[i] = (dataset.imgs[i][0],0)
-    return dataset
+    datasets = []
+    path   = imgpath + benign + "/"
+    for folder in os.listdir(path):
+        newpath = path + folder + "/"
+        dataset = getImageLoader(newpath,resize)
+        for i in range(len(dataset)):
+            dataset.imgs[i] = (dataset.imgs[i][0],0)
+        datasets.append(dataset)
+    return torch.utils.data.ConcatDataset(datasets)
 
 def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,extensions=["pe","msdos","elf","other"]):
     dataset = get_malware_dataset(resize,extensions)
