@@ -25,13 +25,14 @@ trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-
 trainloader = DataLoader(trainDataset, num_workers=2, batch_size=batch_size, shuffle=True)
 testloader = DataLoader(testDataset, num_workers=2, batch_size=batch_size, shuffle=True)
 
-model = proj.model.GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=0.001)
+CNNresnet = proj.model.GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
+optimizer = torch.optim.Adam(CNNresnet.parameters(), lr=1e-3, weight_decay=0.001)
 
 # tuples de loss et leur coef
 losses = [#(imp.loss.perceptualVGG,1),
           #(imp.loss.totalVariation,1),
           (BCEWithLogitsLoss(),1)]
 
-proj.process.train_malware(model, optimizer, trainloader, losses, runName=runName, epochs=5)
-proj.process.test_malware(model, testloader)
+proj.process.train_malware(CNNresnet, optimizer, trainloader, losses, testloader, runName=runName, epochs=5)
+final_acc = proj.process.test_malware(CNNresnet, testloader)
+print("Accuracy Finale : {}".format(final_acc))
