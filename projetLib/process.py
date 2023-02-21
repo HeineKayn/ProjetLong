@@ -19,7 +19,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
     t1 = tqdm(range(epochs), total=epochs, desc=f"Training progress", colour="#00ff00", leave=True, file=sys.stdout)    
     for epoch in t1:
         running_loss = []
-        t2 = tqdm(loader, leave=False, colour="#005500", file=sys.stdout) 
+        t2 = tqdm(loader, leave=False, colour="#005500", leave=True, file=sys.stdout) 
         net.train()
         for batch_idx,(x,y) in enumerate(t2):
             x = x.to(device)
