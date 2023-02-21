@@ -12,7 +12,7 @@ class GrayscaleResNet(torchvision.models.resnet.ResNet):
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
 def getCNNresnet():
-    basicResnet = GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
+    basicResnet = GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 23, 3])
     CNNresnet = nn.Sequential(
         basicResnet,
         nn.Sigmoid()
