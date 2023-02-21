@@ -2,10 +2,10 @@ import projetLib as proj
 from torch.utils.data import DataLoader
 import torch
 import sys
-from torch.nn import BCEWithLogitsLoss
+from torch.nn import BCEWithLogitsLoss, HingeEmbeddingLoss
 from statistics import mean
 
-runName = "first"
+runName = "hinge"
 batch_size = 32
 
 epochs = 5
@@ -24,9 +24,12 @@ CNNresnet =  proj.model.getCNNresnet()
 optimizer = torch.optim.Adam(CNNresnet.parameters(), lr=1e-3, weight_decay=0.001)
 
 # tuples de loss et leur coef
-losses = [#(imp.loss.perceptualVGG,1),
-          #(imp.loss.totalVariation,1),
-          (BCEWithLogitsLoss(),1)]
+losses = [
+    #(imp.loss.perceptualVGG,1),
+    #(imp.loss.totalVariation,1),
+    (HingeEmbeddingLoss(),1)
+    # (BCEWithLogitsLoss(),1)
+]
 
 proj.process.train_malware(CNNresnet, optimizer, trainloader, losses, testloader, runName=runName, epochs=epochs)
 final_acc = proj.process.test_malware(CNNresnet, testloader)

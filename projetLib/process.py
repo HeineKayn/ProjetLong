@@ -4,6 +4,7 @@ import sys
 from statistics import mean
 from torch import nn
 from torchmetrics import ConfusionMatrix
+import os
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -27,6 +28,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
                 outputs = net(x)
                 try :
                     outputs  = torch.reshape(outputs,(32,))
+                    outputs[outputs==0] = -1
                     loss = 1e-5
                     for criterion,coef in losses : 
                         loss += criterion(outputs, y)*coef
@@ -36,21 +38,24 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
                     if ((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == len(t2)):
                         optimizer.step()
                         optimizer.zero_grad()
-                    t2.set_description(f'Training loss: {mean(running_loss)*1000:.5f}, LR : {current_lr}, epoch {epoch + 1}/{epochs}')
+                    t2.set_description(f'Training loss: {mean(running_loss)*1000:.5f}')
                 except Exception as e:
                     pass
 
         accuracy = test_malware(net, testloader)
-        with open("./last_results.txt","a") as f:
-            f.write(f"{runName} - Epoch : {epoch} - Accuracy {accuracy} - Loss : {running_loss[-1]} LR : {current_lr}")
-
-        t1.set_description(f'Epoch {epoch + 1}/{epochs}, Accuracy {accuracy}, LR : {current_lr}')
+        t1.set_description(f'Epoch {epoch + 1}/{epochs}, Accuracy {accuracy*100:.4f}%, LR : {current_lr}')
         if lrDecrease :        
             current_lr = optimizer.param_groups[0]["lr"]
             lrs.append(current_lr)
             scheduler.step()
-        torch.save(net.state_dict(),"./modelSave/{}_{}".format(runName,epoch))
 
+        runFolder = f"./modelSave/{runName}/"
+        if not os.path.exists(runFolder):
+            os.makedirs(runFolder)
+        torch.save(net.state_dict(),runFolder+f"model_{epoch}.pt")
+
+        with open(runFolder + "last_results.txt","a") as f:
+            f.write(f"{runName} - Epoch : {epoch} - Accuracy {accuracy*100:.4f}% - Loss : {mean(running_loss)*1000:.5f} LR : {current_lr}\n")
 
 def test_malware(net, testloader):
     with torch.no_grad():
