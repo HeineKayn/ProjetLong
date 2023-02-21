@@ -5,7 +5,7 @@ import sys
 from torch.nn import BCEWithLogitsLoss, HingeEmbeddingLoss
 from statistics import mean
 
-runName = "hinge"
+runName = "hinge_bce"
 batch_size = 32
 
 epochs = 5
@@ -27,8 +27,8 @@ optimizer = torch.optim.Adam(CNNresnet.parameters(), lr=1e-3, weight_decay=0.001
 losses = [
     #(imp.loss.perceptualVGG,1),
     #(imp.loss.totalVariation,1),
+    (BCEWithLogitsLoss(),1),
     (HingeEmbeddingLoss(),1)
-    # (BCEWithLogitsLoss(),1)
 ]
 
 proj.process.train_malware(CNNresnet, optimizer, trainloader, losses, testloader, runName=runName, epochs=epochs)

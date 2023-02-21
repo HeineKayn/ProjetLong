@@ -28,10 +28,16 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
                 outputs = net(x)
                 try :
                     outputs  = torch.reshape(outputs,(32,))
-                    outputs[outputs==0] = -1
                     loss = 1e-5
-                    for criterion,coef in losses : 
-                        loss += criterion(outputs, y)*coef
+
+                    criterion,coef = losses[0]
+                    loss += criterion(outputs, y)*coef
+                    outputs[outputs==0] = -1
+                    criterion,coef = losses[1]
+                    loss += criterion(outputs, y)*coef
+
+                    # for criterion,coef in losses : 
+                    #     loss += criterion(outputs, y)*coef
                     loss /= accum_iter
                     running_loss.append(loss.item())
                     loss.backward()
