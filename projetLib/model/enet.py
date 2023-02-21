@@ -40,7 +40,7 @@ class InitialBlock(nn.Module):
         # the extension branch
         self.main_branch = nn.Conv2d(
             in_channels,
-            out_channels - 3,
+            out_channels - 1,
             kernel_size=3,
             stride=2,
             padding=1,
@@ -462,7 +462,7 @@ class ENet(nn.Module):
     is used. Default: True.
     """
 
-    def __init__(self, num_classes, encoder_relu=False, decoder_relu=True):
+    def __init__(self, num_classes=1, encoder_relu=False, decoder_relu=False):
         super().__init__()
 
         self.initial_block = InitialBlock(1, 16, relu=encoder_relu)
@@ -600,15 +600,16 @@ class ENet(nn.Module):
         x = self.dilated3_5(x)
         x = self.asymmetric3_6(x)
         x = self.dilated3_7(x)
+        x = nn.Linear(128, 1)(x)
 
-        # Stage 4 - Decoder
-        x = self.upsample4_0(x, max_indices2_0, output_size=stage2_input_size)
-        x = self.regular4_1(x)
-        x = self.regular4_2(x)
+        # # Stage 4 - Decoder
+        # x = self.upsample4_0(x, max_indices2_0, output_size=stage2_input_size)
+        # x = self.regular4_1(x)
+        # x = self.regular4_2(x)
 
-        # Stage 5 - Decoder
-        x = self.upsample5_0(x, max_indices1_0, output_size=stage1_input_size)
-        x = self.regular5_1(x)
-        x = self.transposed_conv(x, output_size=input_size)
+        # # Stage 5 - Decoder
+        # x = self.upsample5_0(x, max_indices1_0, output_size=stage1_input_size)
+        # x = self.regular5_1(x)
+        # x = self.transposed_conv(x, output_size=input_size)
 
-        return 
+        return x

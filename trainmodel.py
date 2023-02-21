@@ -5,7 +5,7 @@ import sys
 from torch.nn import BCEWithLogitsLoss, HingeEmbeddingLoss
 from statistics import mean
 
-runName = "normalisation"
+runName = "resnet152"
 batch_size = 32
 
 epochs = 5
