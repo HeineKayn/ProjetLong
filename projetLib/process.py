@@ -19,7 +19,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
     t1 = tqdm(range(epochs), total=epochs, desc=f"Training progress", colour="#00ff00", leave=True, file=sys.stdout)    
     for epoch in t1:
         running_loss = []
-        t2 = tqdm(loader, colour="#005500", leave=True, file=sys.stdout) 
+        t2 = tqdm(loader, colour="#005500", leave=False, file=sys.stdout) 
         net.train()
         for batch_idx,(x,y) in enumerate(t2):
             x = x.to(device)
@@ -29,15 +29,8 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
                 try :
                     outputs  = torch.reshape(outputs,(32,))
                     loss = 1e-5
-
-                    criterion,coef = losses[0]
-                    loss += criterion(outputs, y)*coef
-                    outputs[outputs==0] = -1
-                    criterion,coef = losses[1]
-                    loss += criterion(outputs, y)*coef
-
-                    # for criterion,coef in losses : 
-                    #     loss += criterion(outputs, y)*coef
+                    for criterion,coef in losses : 
+                        loss += criterion(outputs, y)*coef
                     loss /= accum_iter
                     running_loss.append(loss.item())
                     loss.backward()
