@@ -5,7 +5,7 @@ import sys
 from torch.nn import BCEWithLogitsLoss, HingeEmbeddingLoss
 from statistics import mean
 
-runName = "smallDataset"
+runName = "smallPE"
 batch_size = 16
 limit = 10000
 
@@ -15,7 +15,7 @@ if len(sys.argv)>1:
 
 trainDataset, testDataset = proj.image.getTrainTest(
     resize=(224,224), batch_size=batch_size, seed=1, limit=limit,
-    test_proportion=0.2, extensions=["pe","msdos","elf","other"])
+    test_proportion=0.2, extensions=["pe"])
 
 print(f"{runName} : Images de train {len(trainDataset)}, Images de test {len(testDataset)}")
 
