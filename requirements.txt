@@ -6,3 +6,5 @@ py7zr
 torchvision
 python-dotenv
 torchmetrics
+pefile
+capstone

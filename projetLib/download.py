@@ -57,7 +57,7 @@ def extract_features(unzipped,dest):
             else : 
                 hashed = str(abs(hash(entry)))
                 imgpath = f"{dest}{folder}/{hashed}"
-                projetLib.data.extract_img(filepath,imgpath)
+                projetLib.image.extract_img(filepath,imgpath)
         except Exception as e : print(e)
         os.remove(filepath)
     shutil.rmtree(unzipped)

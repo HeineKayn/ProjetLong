@@ -6,14 +6,14 @@ from torch.nn import BCEWithLogitsLoss, HingeEmbeddingLoss
 from statistics import mean
 
 runName = "smallDataset"
-batch_size = 32
+batch_size = 16
 limit = 10000
 
 epochs = 5
 if len(sys.argv)>1:
     epochs = int(sys.argv[1])
 
-trainDataset, testDataset = proj.data.getTrainTest(
+trainDataset, testDataset = proj.image.getTrainTest(
     resize=(224,224), batch_size=batch_size, seed=1, limit=limit,
     test_proportion=0.2, extensions=["pe","msdos","elf","other"])
 
