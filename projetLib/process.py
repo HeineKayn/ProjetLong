@@ -61,7 +61,9 @@ def test_malware(net, testloader):
         net.eval()
         matrix = torch.zeros((2,2)).to(device)
         confmat = ConfusionMatrix(task="binary", num_classes=2).to(device)
-        for x, y in testloader : 
+
+        t1 = tqdm(testloader, desc=f"Testing progress", colour="#005500", leave=False, file=sys.stdout) 
+        for x, y in t1 : 
             x = x.to(device)
             y = y.to(device)
             outputs = net(x)
