@@ -41,18 +41,19 @@ def get_malware_dataset(resize,whitelist):
             datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
 
-def get_benign_dataset(resize):
+def get_benign_dataset(resize, whitelist):
     datasets = []
     path   = imgpath + benign + "/"
-    for folder in os.listdir(path):
-        newpath = path + folder + "/"
-        dataset = getImageLoader(newpath,resize)
-        for i in range(len(dataset)):
-            dataset.imgs[i] = (dataset.imgs[i][0],0)
-        datasets.append(dataset)
+    for ext in whitelist : 
+        newpath = path + ext + "/"
+        if os.path.exists(newpath):
+            dataset = getImageLoader(newpath,resize)
+            for i in range(len(dataset)):
+                dataset.imgs[i] = (dataset.imgs[i][0],0)
+            datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
 
-def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,extensions=["pe","msdos","elf","other"]):
+def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit=0,extensions=["pe","msdos","elf","other"]):
     dataset = get_malware_dataset(resize,extensions)
     lenTrainTest = int(len(dataset)*(1-test_proportion))
     restDataset  = lenTrainTest%batch_size
@@ -62,6 +63,8 @@ def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,exten
     trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
     benign = get_benign_dataset(resize)
     testDataset = torch.utils.data.ConcatDataset([testDataset,benign])
+    if limit : 
+        trainDataset,_ = torch.utils.data.random_split(trainDataset, [limit, len(trainDataset)-limit],g)
     return trainDataset,testDataset
 
 
