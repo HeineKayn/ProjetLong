@@ -26,22 +26,20 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
             y = y.to(device).float()
             with torch.set_grad_enabled(True):
                 outputs = net(x)
-                try :
-                    outputs  = torch.reshape(outputs,(32,))
-                    loss = 1e-5
-                    for criterion,coef in losses : 
-                        loss += criterion(outputs, y)*coef
-                    loss /= accum_iter
-                    running_loss.append(loss.item())
-                    loss.backward()
-                    if ((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == len(t2)):
-                        optimizer.step()
-                        optimizer.zero_grad()
-                    t2.set_description(f'Training loss: {mean(running_loss)*1000:.5f}')
-                except Exception as e:
-                    pass
-            print(running_loss)
-            
+                outputs  = torch.reshape(outputs,(32,))
+                loss = 1e-5
+                for criterion,coef in losses : 
+                    loss += criterion(outputs, y)*coef
+                loss /= accum_iter
+                running_loss.append(loss.item())
+                loss.backward()
+                if ((batch_idx + 1) % accum_iter == 0) or (batch_idx + 1 == len(t2)):
+                    optimizer.step()
+                    optimizer.zero_grad()
+                t2.set_description(f'Training loss: {mean(running_loss)*1000:.5f}')
+                # except Exception as e:
+                #     pass
+
         accuracy = test_malware(net, testloader)
         t1.set_description(f'Epoch {epoch + 1}/{epochs}, Accuracy {accuracy*100:.4f}%, LR : {current_lr}')
         if lrDecrease :        
