@@ -40,7 +40,8 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
                     t2.set_description(f'Training loss: {mean(running_loss)*1000:.5f}')
                 except Exception as e:
                     pass
-
+            print(running_loss)
+            
         accuracy = test_malware(net, testloader)
         t1.set_description(f'Epoch {epoch + 1}/{epochs}, Accuracy {accuracy*100:.4f}%, LR : {current_lr}')
         if lrDecrease :        
@@ -53,7 +54,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
             os.makedirs(runFolder)
         torch.save(net.state_dict(),runFolder+f"model_{epoch}.pt")
 
-        print(running_loss)
+        
         with open(runFolder + "last_results.txt","a") as f:
             f.write(f"{runName} - Epoch : {epoch} - Accuracy {accuracy*100:.4f}% - Loss : {mean(running_loss)*1000:.5f} LR : {current_lr}\n")
 
