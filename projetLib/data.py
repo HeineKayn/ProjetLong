@@ -68,10 +68,10 @@ def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit
     if limit : 
         if len(trainDataset) > limit :
             trainDataset,_ = torch.utils.data.random_split(trainDataset, [limit, len(trainDataset)-limit],g)
-        if len(testDataset) > limit :
-            testDataset,_  = torch.utils.data.random_split(testDataset, [limit, len(testDataset)-limit],g)
+        testlimit = int(limit*test_proportion)
+        if len(testDataset) > testlimit :
+            testDataset,_  = torch.utils.data.random_split(testDataset, [testlimit, len(testDataset)-testlimit],g)
     return trainDataset,testDataset
-
 
 # Serait mieux si file image et renvoie image ?
 def crop_img(path,h=256, w=256):
