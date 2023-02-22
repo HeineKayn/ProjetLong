@@ -44,13 +44,15 @@ def get_malware_dataset(resize,whitelist):
 def get_benign_dataset(resize, whitelist):
     datasets = []
     path   = imgpath + benign + "/"
-    for ext in whitelist : 
-        newpath = path + ext + "/"
-        if os.path.exists(newpath):
-            dataset = getImageLoader(newpath,resize)
-            for i in range(len(dataset)):
-                dataset.imgs[i] = (dataset.imgs[i][0],0)
-            datasets.append(dataset)
+    for folder in os.listdir(imgpath):
+        folderpath = path + folder + "/"
+        for ext in whitelist : 
+            newpath = folderpath + ext + "/"
+            if os.path.exists(newpath):
+                dataset = getImageLoader(newpath,resize)
+                for i in range(len(dataset)):
+                    dataset.imgs[i] = (dataset.imgs[i][0],0)
+                datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
 
 def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit=0,extensions=["pe","msdos","elf","other"]):
