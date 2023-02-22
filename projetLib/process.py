@@ -53,6 +53,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
             os.makedirs(runFolder)
         torch.save(net.state_dict(),runFolder+f"model_{epoch}.pt")
 
+        print(running_loss)
         with open(runFolder + "last_results.txt","a") as f:
             f.write(f"{runName} - Epoch : {epoch} - Accuracy {accuracy*100:.4f}% - Loss : {mean(running_loss)*1000:.5f} LR : {current_lr}\n")
 
