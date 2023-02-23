@@ -70,7 +70,7 @@ def test_malware(net, testloader):
             outputs = torch.reshape(outputs,(len(y),))
             matrix  += confmat(outputs, y)
         (tp,fp),(fn,tn) = matrix
-        accuracy = (tp+tn)/(tp+tn+fp+fn) 
+        accuracy = (tp+tn)/(tp+tn+fp+fn) # tn/(tn+fp) 
         recall = tp/(tp+fn) # quelle proporition positif a été id correctement 
         precision = tp/(tp+fp) # quelle proporition positif a été id correctement 
         return accuracy,recall,precision
