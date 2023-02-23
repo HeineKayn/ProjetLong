@@ -47,24 +47,6 @@ def extract_features(unzipped,dest):
     t1 = tqdm(entries, total=len(entries), desc=f"Extracting features", leave=True, file=sys.stdout)
     for entry in t1:
         filepath = unzipped + entry
-<<<<<<< HEAD
-        try: 
-            fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
-            folder = "other"
-            if "PE" in fileType : folder = "pe"
-            elif "ELF" in fileType : folder = "elf"
-            elif "MS-DOS" in fileType : folder = "msdos"
-
-            hashed = str(abs(hash(entry)))
-            imgpath = f"{dest}{folder}/{hashed}"
-            projetLib.data.extract_img(filepath,imgpath)
-        except Exception as e:print(e)
-    shutil.rmtree(unzipped)
-
-def downloadAll(id,istart=0):
-    base = "./data/images"
-    for i in reversed(range(id+3*istart,460,3)):
-=======
         try : 
             fileType = subprocess.check_output(f"file {filepath}", shell=True).decode()
             folder = "other"
@@ -82,7 +64,6 @@ def downloadAll(id,istart=0):
 
 def downloadAll(id,istart=0):
     for i in reversed(range(id,460-3*istart,3)):
->>>>>>> c01d6c6b3883bdea04737a5c219bb37eb5918e04
         i = str(i)
         i = "0"*(5-len(i)) + i
         dest = f"{base}/Virusshare{i}/"

@@ -63,8 +63,8 @@ def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit
     if seed != 0 :
         g.manual_seed(seed)
     trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
-    benign = get_benign_dataset(resize,extensions)
-    testDataset = torch.utils.data.ConcatDataset([testDataset,benign])
+    #benign = get_benign_dataset(resize,extensions)
+    #testDataset = torch.utils.data.ConcatDataset([testDataset,benign])
     if limit : 
         if len(trainDataset) > limit :
             trainDataset,_ = torch.utils.data.random_split(trainDataset, [limit, len(trainDataset)-limit],g)
