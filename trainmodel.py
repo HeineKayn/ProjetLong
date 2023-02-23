@@ -7,7 +7,7 @@ from statistics import mean
 
 runName = "resnet_2"
 batch_size = 16
-limit = 0
+limit = 10000
 
 epochs = 5
 if len(sys.argv)>1:
