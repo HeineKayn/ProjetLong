@@ -41,8 +41,9 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
                 except Exception as e:
                     pass
 
-        accuracy = test_malware(net, testloader)
-        t1.set_description(f'Epoch {epoch + 1}/{epochs}, Accuracy {accuracy*100:.4f}%, LR : {current_lr}')
+        accuracy,recall,precision = test_malware(net, testloader)
+        desc = f'{runName} - Epoch {epoch + 1}/{epochs}, Accuracy {accuracy*100:.4f}%, Recall {recall*100:.4f}%, Precision {precision*100:.4f}%, Loss : {mean(running_loss)*1000:.5f}, LR : {current_lr}'
+        t1.set_description(desc)
         if lrDecrease :        
             current_lr = optimizer.param_groups[0]["lr"]
             lrs.append(current_lr)
@@ -52,10 +53,8 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
         if not os.path.exists(runFolder):
             os.makedirs(runFolder)
         torch.save(net.state_dict(),runFolder+f"model_{epoch}.pt")
-
-        
         with open(runFolder + "last_results.txt","a") as f:
-            f.write(f"{runName} - Epoch : {epoch} - Accuracy {accuracy*100:.4f}% - Loss : {mean(running_loss)*1000:.5f} LR : {current_lr}\n")
+            f.write(desc+"\n")
 
 def test_malware(net, testloader):
     with torch.no_grad():
@@ -72,7 +71,6 @@ def test_malware(net, testloader):
             matrix  += confmat(outputs, y)
         (tp,fp),(fn,tn) = matrix
         accuracy = (tp+tn)/(tp+tn+fp+fn) 
-        return accuracy
-
-        #recall = tp/(tp+fn) # quelle proporition positif a été id correctement 
-        #precision = tp/(tp+fp) # quelle proportion positif = correct
+        recall = tp/(tp+fn) # quelle proporition positif a été id correctement 
+        precision = tp/(tp+fp) # quelle proporition positif a été id correctement 
+        return accuracy,recall,precision

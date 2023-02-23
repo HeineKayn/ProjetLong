@@ -5,9 +5,9 @@ import sys
 from torch.nn import BCEWithLogitsLoss, HingeEmbeddingLoss
 from statistics import mean
 
-runName = "smallPE_ELF"
+runName = "vgg_RE"
 batch_size = 16
-limit = 10000
+limit = 0
 
 epochs = 5
 if len(sys.argv)>1:
@@ -15,7 +15,7 @@ if len(sys.argv)>1:
 
 trainDataset, testDataset = proj.image.getTrainTest(
     resize=(224,224), batch_size=batch_size, seed=1, limit=limit,
-    test_proportion=0.2, extensions=["pe","elf"])
+    test_proportion=0.2) # , extensions=["elf"]
 
 print(f"{runName} : Images de train {len(trainDataset)}, Images de test {len(testDataset)}")
 
@@ -35,5 +35,3 @@ losses = [
 ]
 
 proj.process.train_malware(model, optimizer, trainloader, losses, testloader, runName=runName, epochs=epochs)
-final_acc = proj.process.test_malware(model, testloader)
-print("Accuracy Finale : {}".format(final_acc))
