@@ -18,21 +18,22 @@ benign = "Benign"
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-def getImageLoader(file:str,resize):
+def getImageLoader(file:str,resize,doRGB):
     process = transforms.Compose([
             transforms.Grayscale(),
-            transforms.Resize(resize), 
+            # transforms.Resize(resize), 
+            Crop_img(resize,doRGB),
             transforms.ToTensor()
             #  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
     return ImageFolder(file, process)
 
-def get_malware_dataset(resize,whitelist):
+def get_malware_dataset(resize,whitelist,doRGB):
     datasets = []
     for folder in os.listdir(imgpath):
         if folder != benign :
             newpath   = imgpath + folder + "/"
-            dataset   = getImageLoader(newpath,resize)
+            dataset   = getImageLoader(newpath,resize,doRGB)
             idwhitelist = [dataset.class_to_idx[x] for x in whitelist if x in dataset.class_to_idx.keys()]
             idx = [i for i in range(len(dataset)) if dataset.imgs[i][1] in idwhitelist]
             for i in range(len(dataset)):
@@ -41,12 +42,12 @@ def get_malware_dataset(resize,whitelist):
             datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
 
-def get_benign_dataset(resize, whitelist):
+def get_benign_dataset(resize, whitelist, doRGB):
     datasets = []
     path   = imgpath + benign + "/"
     for folder in os.listdir(path):
         newpath = path + folder + "/"
-        dataset   = getImageLoader(newpath,resize)
+        dataset   = getImageLoader(newpath,resize,doRGB)
         idwhitelist = [dataset.class_to_idx[x] for x in whitelist if x in dataset.class_to_idx.keys()]
         idx = [i for i in range(len(dataset)) if dataset.imgs[i][1] in idwhitelist]
         for i in range(len(dataset)):
@@ -55,15 +56,15 @@ def get_benign_dataset(resize, whitelist):
         datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
 
-def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit=0,extensions=["pe","msdos","elf","other"]):
-    dataset = get_malware_dataset(resize,extensions)
+def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit=0,extensions=["pe","msdos","elf","other"],doRGB=False):
+    dataset = get_malware_dataset(resize,extensions,doRGB)
     lenTrainTest = int(len(dataset)*(1-test_proportion))
     restDataset  = lenTrainTest%batch_size
     g = torch.Generator()
     if seed != 0 :
         g.manual_seed(seed)
     trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
-    benign = get_benign_dataset(resize,extensions)
+    benign = get_benign_dataset(resize,extensions,doRGB)
     testDataset = torch.utils.data.ConcatDataset([testDataset,benign])
     if limit : 
         if len(trainDataset) > limit :
@@ -73,17 +74,38 @@ def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit
             testDataset,_  = torch.utils.data.random_split(testDataset, [testlimit, len(testDataset)-testlimit],g)
     return trainDataset,testDataset
 
-# Serait mieux si file image et renvoie image ?
-def crop_img(path,h=256, w=256):
-    with Image.open(path) as img:
+class Crop_img(torch.nn.Module):
+
+    def __init__(self, size, doRGB=False):
+        super().__init__()
+        self.size = size
+        self.doRGB = doRGB
+        
+    def crop_img(self, img, resize):
+        h,w = resize
         img_arr = np.array(img)
-        h2,w2 = img_arr.shape
+        h2,w2   = img_arr.shape
         img_arr = list(np.reshape(img_arr, (h2*w2)))
         img_arr += [0]*(h*w - len(img_arr))
         img_arr = img_arr[:h*w]
         img_arr = np.reshape(np.array(img_arr), (h,w))
         img     = Image.fromarray(img_arr.astype('uint8'), 'L')
         return img
+
+    def crop_img_RGB(self, img, resize):
+        h,w = resize
+        img_arr = np.array(img)
+        h2,w2   = img_arr.shape
+        img_arr = list(np.reshape(img_arr, (h2*w2)))
+        img_arr += [0]*(h*w*3 - len(img_arr))
+        img_arr = img_arr[:h*w*3]
+        img_arr = np.reshape(np.array(img_arr), (h,w,3))
+        img     = Image.fromarray(img_arr.astype('uint8'), 'RGB')
+        return img
+
+    def forward(self, img):
+        if self.doRGB : return self.crop_img_RGB(img,self.size)
+        else : return self.crop_img(img,self.size)
 
 def extract_img(filepath,imagepath, doSave=True):
     with open(filepath, 'rb') as img_set:

@@ -2,10 +2,10 @@ import torch.nn as nn
 import torch
 
 class VGG16(nn.Module):
-    def __init__(self, num_classes=1):
+    def __init__(self, input_channel, num_classes=1):
         super(VGG16, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(input_channel, 64, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU())
         self.layer2 = nn.Sequential(
@@ -73,7 +73,7 @@ class VGG16(nn.Module):
             nn.Linear(4096, num_classes))
         
     def forward(self, x):
-        out = self.layer1(x)
+        out = self.layer1(x)    
         out = self.layer2(out)
         out = self.layer3(out)
         out = self.layer4(out)
