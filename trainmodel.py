@@ -5,7 +5,7 @@ import sys
 from torch.nn import BCEWithLogitsLoss, HingeEmbeddingLoss
 from statistics import mean
 
-runName = "resnet_2"
+runName = "smallDataset_2"
 batch_size = 16
 limit = 10000
 
