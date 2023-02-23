@@ -4,6 +4,7 @@ import sys
 from statistics import mean
 from torch import nn
 from torchmetrics import ConfusionMatrix
+from torchmetrics import 
 import os
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -67,6 +68,7 @@ def test_malware(net, testloader):
             x = x.to(device)
             y = y.to(device)
             outputs = net(x)
+            #out = nn.Sigmoid()(out)
             outputs = torch.reshape(outputs,(len(y),))
             matrix  += confmat(outputs, y)
         (tp,fp),(fn,tn) = matrix

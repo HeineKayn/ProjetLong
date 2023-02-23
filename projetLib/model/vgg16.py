@@ -90,5 +90,5 @@ class VGG16(nn.Module):
         out = self.fc(out)
         out = self.fc1(out)
         out = self.fc2(out)
-        out = nn.Sigmoid()(out)
+        #out = nn.Sigmoid()(out)
         return out
