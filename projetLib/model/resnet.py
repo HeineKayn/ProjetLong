@@ -17,7 +17,7 @@ def getCNNresnet():
         basicResnet,
         nn.Sigmoid()
     )
-    return CNNresnet
+    return basicResnet
 
 # model= GrayscaleResNet(torchvision.models.resnet.Bottleneck,[3, 4, 6, 3])
 # [3, 4, 6, 3] => https://github.com/pytorch/vision/blob/791c172a337d98012018f98ffde93b1020ba3ed5/torchvision/models/resnet.py#L236

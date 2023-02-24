@@ -9,7 +9,7 @@ runName = "smallpe_2"
 batch_size = 16
 limit = 10000
 
-epochs = 5
+epochs = 1
 if len(sys.argv)>1:
     epochs = int(sys.argv[1])
 

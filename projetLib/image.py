@@ -30,8 +30,9 @@ def getImageLoader(file:str,resize):
 def get_malware_dataset(resize,whitelist):
     datasets = []
     for folder in os.listdir(imgpath):
-        if folder != benign :
+        if folder != benign:
             newpath   = imgpath + folder + "/"
+            print(newpath,folder)
             dataset   = getImageLoader(newpath,resize)
             idwhitelist = [dataset.class_to_idx[x] for x in whitelist if x in dataset.class_to_idx.keys()]
             idx = [i for i in range(len(dataset)) if dataset.imgs[i][1] in idwhitelist]

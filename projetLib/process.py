@@ -3,8 +3,7 @@ from tqdm import tqdm
 import sys
 from statistics import mean
 from torch import nn
-from torchmetrics import ConfusionMatrix
-from torchmetrics import 
+from torchmetrics import ConfusionMatrix,Accuracy
 import os
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -62,13 +61,13 @@ def test_malware(net, testloader):
         net.eval()
         matrix = torch.zeros((2,2)).to(device)
         confmat = ConfusionMatrix(task="binary", num_classes=2).to(device)
-
+        accuracy = Accuracy(task="binary",num_classes=2).to(device)
         t1 = tqdm(testloader, desc=f"Testing progress", colour="#005500", leave=False, file=sys.stdout) 
         for x, y in t1 : 
             x = x.to(device)
             y = y.to(device)
             outputs = net(x)
-            #out = nn.Sigmoid()(out)
+            out = nn.Sigmoid()(out)
             outputs = torch.reshape(outputs,(len(y),))
             matrix  += confmat(outputs, y)
         (tp,fp),(fn,tn) = matrix
