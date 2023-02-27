@@ -56,22 +56,58 @@ def get_benign_dataset(resize, whitelist, doRGB):
         datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
 
-def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit=0,extensions=["pe","msdos","elf","other"],doRGB=False):
-    dataset = get_malware_dataset(resize,extensions,doRGB)
-    lenTrainTest = int(len(dataset)*(1-test_proportion))
-    restDataset  = lenTrainTest%batch_size
+# def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit=0,extensions=["pe","msdos","elf","other"],doRGB=False):
+#     dataset = get_malware_dataset(resize,extensions,doRGB)
+#     lenTrainTest = int(len(dataset)*(1-test_proportion))
+#     restDataset  = lenTrainTest%batch_size
+#     g = torch.Generator()
+#     if seed != 0 :
+#         g.manual_seed(seed)
+#     trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
+#     benign = get_benign_dataset(resize,extensions,doRGB)
+#     testDataset = torch.utils.data.ConcatDataset([testDataset,benign])
+#     if limit : 
+#         if len(trainDataset) > limit :
+#             trainDataset,_ = torch.utils.data.random_split(trainDataset, [limit, len(trainDataset)-limit],g)
+#         testlimit = int(limit*test_proportion)
+#         if len(testDataset) > testlimit :
+#             testDataset,_  = torch.utils.data.random_split(testDataset, [testlimit, len(testDataset)-testlimit],g)
+#     return trainDataset,testDataset
+
+def getTrainTest(resize=(224,224),batch_size=32,seed=1,trainSize=[],testSize=[],extensions=["pe","msdos","elf","other"],doRGB=False):
     g = torch.Generator()
-    if seed != 0 :
-        g.manual_seed(seed)
-    trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
-    benign = get_benign_dataset(resize,extensions,doRGB)
-    testDataset = torch.utils.data.ConcatDataset([testDataset,benign])
-    if limit : 
-        if len(trainDataset) > limit :
-            trainDataset,_ = torch.utils.data.random_split(trainDataset, [limit, len(trainDataset)-limit],g)
-        testlimit = int(limit*test_proportion)
-        if len(testDataset) > testlimit :
-            testDataset,_  = torch.utils.data.random_split(testDataset, [testlimit, len(testDataset)-testlimit],g)
+    if seed != 0 : g.manual_seed(seed)
+
+    malTrain,benTrain = [],[]
+    malTest,benTest   = [],[]
+    for ext in extensions:
+        malExt = get_malware_dataset(resize,[ext],doRGB) 
+        malExt,restMal = torch.utils.data.random_split(malExt, [trainSize[0]//len(extensions),len(malExt)-trainSize[0]//len(extensions)],g)
+        malTrain.append(malExt)
+        restMal,_ = torch.utils.data.random_split(restMal, [testSize[0]//len(extensions),len(restMal)-testSize[0]//len(extensions)],g)
+        malTest.append(restMal)
+
+        benExt = get_benign_dataset(resize,[ext],doRGB)
+        benExt,restBen = torch.utils.data.random_split(benExt, [trainSize[1]//len(extensions),len(benExt)-trainSize[1]//len(extensions)],g)
+        benTrain.append(benExt)
+        restBen,_ = torch.utils.data.random_split(restBen, [testSize[1]//len(extensions),len(restBen)-testSize[1]//len(extensions)],g)
+        benTest.append(restBen)
+
+    # print("Répartition Malware train -----")
+    # for x in malTrain : print(len(x))
+    # print("Répartition Benin train -----")
+    # for x in benTrain : print(len(x))
+    # print("Répartition Malware test -----")
+    # for x in malTest  : print(len(x))
+    # print("Répartition Benin test -----")
+    # for x in benTest  : print(len(x))
+
+    malTrain = torch.utils.data.ConcatDataset(malTrain)
+    benTrain = torch.utils.data.ConcatDataset(benTrain)
+    malTest  = torch.utils.data.ConcatDataset(malTest)
+    benTest  = torch.utils.data.ConcatDataset(benTest)
+    trainDataset = torch.utils.data.ConcatDataset([malTrain,benTrain])
+    testDataset  = torch.utils.data.ConcatDataset([malTest ,benTest])
     return trainDataset,testDataset
 
 class Crop_img(torch.nn.Module):
