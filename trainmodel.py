@@ -14,7 +14,7 @@ if len(sys.argv)>1:
     epochs = int(sys.argv[1])
 
 trainDataset, testDataset = proj.image.getTrainTest(
-    resize=(224,224), batch_size=batch_size, seed=1, limit=limit,
+    resize=(384,384), batch_size=batch_size, seed=1, limit=limit,
     test_proportion=0.2, extensions=["pe","elf"], doRGB=True)
 
 print(f"{runName} : Images de train {len(trainDataset)}, Images de test {len(testDataset)}")
