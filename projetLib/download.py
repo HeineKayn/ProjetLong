@@ -53,11 +53,12 @@ def extract_features(unzipped,dest):
             if "PE" in fileType    : folder = "pe"
             elif "ELF" in fileType : folder = "elf"
             # elif "MS-DOS" in fileType : folder = "msdos"
-
-            else : 
+            # else : 
+            if folder != "other" :
                 hashed = str(abs(hash(entry)))
                 imgpath = f"{dest}{folder}/{hashed}"
                 projetLib.image.extract_img(filepath,imgpath)
+
         except Exception as e : print(e)
         os.remove(filepath)
     shutil.rmtree(unzipped)

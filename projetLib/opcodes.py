@@ -285,3 +285,4 @@ def extract_sequence(path):
  
     # if sequence :
     #     encode_sequence(sequence)
+    return sequence

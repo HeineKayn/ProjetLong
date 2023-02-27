@@ -8,7 +8,7 @@ class RNN(nn.Module):
         self.lstm = nn.LSTM(input_size, hidden_size=hidden_size, num_layers=num_layers)
         self.dense = nn.Linear(hidden_size, 1)
         
-    def forward(self, x):
+    def forward(self, x): # x = [batch_size, 128, 49]
         # output, _ = self.lstm(x, (h0, c0))
         last_element = y[:,-1,:]
         y = self.dense(last_element)

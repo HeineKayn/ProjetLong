@@ -599,7 +599,7 @@ class ENet(nn.Module):
         x = self.regular3_4(x)
         x = self.dilated3_5(x)
         x = self.asymmetric3_6(x)
-        x = self.dilated3_7(x)
+        x = self.dilated3_7(x) # [batch_size, 128, 60, 60]
 
         # # Stage 4 - Decoder
         # x = self.upsample4_0(x, max_indices2_0, output_size=stage2_input_size)
