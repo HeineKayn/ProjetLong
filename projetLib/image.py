@@ -145,8 +145,8 @@ class Resize_img(torch.nn.Module):
         return transforms.Resize(resize)(img)
 
     def forward(self, img):
-        if self.doRGB : return self.resize_img(img,self.size)
-        else : return self.resize_img_RGB(img,self.size)
+        if self.doRGB : return self.resize_img_RGB(img,self.size)
+        else : return self.resize_img(img,self.size)
 
 def extract_img(filepath,imagepath, doSave=True):
     with open(filepath, 'rb') as img_set:
