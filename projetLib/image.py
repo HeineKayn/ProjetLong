@@ -18,11 +18,13 @@ benign = "Benign"
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-def getImageLoader(file:str,resize,doRGB):
+def getImageLoader(file:str,resize,doRGB,doCrop):
+    if doCrop : func = Crop_img
+    else : func = Resize_img
     process = transforms.Compose([
             transforms.Grayscale(),
             # transforms.Resize(resize), 
-            Crop_img(resize,doRGB),
+            func(resize,doRGB),
             transforms.ToTensor()
             #  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
@@ -55,24 +57,6 @@ def get_benign_dataset(resize, whitelist, doRGB):
         dataset = Subset(dataset, idx)
         datasets.append(dataset)
     return torch.utils.data.ConcatDataset(datasets)
-
-# def getTrainTest(resize=(224,224),batch_size=32,seed=1,test_proportion=0.2,limit=0,extensions=["pe","msdos","elf","other"],doRGB=False):
-#     dataset = get_malware_dataset(resize,extensions,doRGB)
-#     lenTrainTest = int(len(dataset)*(1-test_proportion))
-#     restDataset  = lenTrainTest%batch_size
-#     g = torch.Generator()
-#     if seed != 0 :
-#         g.manual_seed(seed)
-#     trainDataset,testDataset = torch.utils.data.random_split(dataset, [lenTrainTest-restDataset, len(dataset)-lenTrainTest+restDataset],g)
-#     benign = get_benign_dataset(resize,extensions,doRGB)
-#     testDataset = torch.utils.data.ConcatDataset([testDataset,benign])
-#     if limit : 
-#         if len(trainDataset) > limit :
-#             trainDataset,_ = torch.utils.data.random_split(trainDataset, [limit, len(trainDataset)-limit],g)
-#         testlimit = int(limit*test_proportion)
-#         if len(testDataset) > testlimit :
-#             testDataset,_  = torch.utils.data.random_split(testDataset, [testlimit, len(testDataset)-testlimit],g)
-#     return trainDataset,testDataset
 
 def getTrainTest(resize=(224,224),batch_size=32,seed=1,trainSize=[],testSize=[],extensions=["pe","msdos","elf","other"],doRGB=False):
     g = torch.Generator()
@@ -138,6 +122,28 @@ class Crop_img(torch.nn.Module):
         img_arr = np.reshape(np.array(img_arr), (h,w,3))
         img     = Image.fromarray(img_arr.astype('uint8'), 'RGB')
         return img
+
+    def forward(self, img):
+        if self.doRGB : return self.crop_img_RGB(img,self.size)
+        else : return self.crop_img(img,self.size)
+
+class Resize_img(torch.nn.Module):
+
+    def __init__(self, size, doRGB=False):
+        super().__init__()
+        self.size = size
+        self.doRGB = doRGB
+        
+    def resize_img(self, img, resize):
+        return transforms.Resize(resize)(img)
+
+    def resize_img_RGB(self, img, resize):
+        h,w = resize
+        img_arr = np.array(img)
+        h2,w2   = img_arr.shape
+        img_arr = list(np.reshape(img_arr, (h2//3,w2//3,3)))
+        img     = Image.fromarray(img_arr.astype('uint8'), 'RGB')
+        return transforms.Resize(resize)(img)
 
     def forward(self, img):
         if self.doRGB : return self.crop_img_RGB(img,self.size)
