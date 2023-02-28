@@ -22,7 +22,7 @@ class Basic(nn.Module):
             # nn.Conv2d(in_channels=256, out_channels=256, kernel_size=5, stride=2),
             # nn.ReLU(True),
             # nn.Conv2d(in_channels=256, out_channels=256, kernel_size=4, stride=1),
-            nn.ReLU(True),
+            # nn.ReLU(True),
         )
         self.linear = nn.Linear(27*27*128, 1)
 
