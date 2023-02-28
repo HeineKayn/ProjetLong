@@ -138,7 +138,6 @@ class Resize_img(torch.nn.Module):
         return transforms.Resize(resize)(img)
 
     def resize_img_RGB(self, img, resize):
-        h,w = resize
         img_arr = np.array(img)
         h2,w2   = img_arr.shape
         img_arr = list(np.reshape(img_arr, (h2//3,w2//3,3)))
@@ -146,8 +145,8 @@ class Resize_img(torch.nn.Module):
         return transforms.Resize(resize)(img)
 
     def forward(self, img):
-        if self.doRGB : return self.crop_img_RGB(img,self.size)
-        else : return self.crop_img(img,self.size)
+        if self.doRGB : return self.resize_img(img,self.size)
+        else : return self.resize_img_RGB(img,self.size)
 
 def extract_img(filepath,imagepath, doSave=True):
     with open(filepath, 'rb') as img_set:
