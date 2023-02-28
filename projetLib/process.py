@@ -42,7 +42,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
                     pass
 
         accuracy,recall,precision = test_malware(net, testloader)
-        desc = f'{runName} - Epoch {epoch + 1}/{epochs}, Accuracy {accuracy*100:.4f}%, Recall {recall*100:.4f}%, Precision {precision*100:.4f}%, Loss : {mean(running_loss)*1000:.5f}, LR : {current_lr}'
+        desc = f'Epoch {epoch + 1}/{epochs}, Accuracy {accuracy*100:.3f}%, Recall {recall*100:.3f}%, Precision {precision*100:.3f}%, Loss : {mean(running_loss)*1000:.4f}, LR : {current_lr:.2E}'
         t1.set_description(desc)
         if lrDecrease :        
             current_lr = optimizer.param_groups[0]["lr"]
