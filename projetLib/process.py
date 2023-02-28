@@ -52,7 +52,7 @@ def train_malware(net, optimizer, loader, losses, testloader=[], runName="defaul
         runFolder = f"./modelSave/{runName}/"
         if not os.path.exists(runFolder):
             os.makedirs(runFolder)
-        torch.save(net.state_dict(),runFolder+f"model_{epoch}.pt")
+        torch.save(net.state_dict(),runFolder+"model.pt")
         with open(runFolder + "last_results.txt","a") as f:
             f.write(desc+"\n")
 
